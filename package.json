@@ -1,0 +1,13 @@
+{
+  "name": "starflix",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "dewiprins",
+  "type": "commonjs",
+  "main": "backend/src/index.ts",
+  "scripts": {
+    "dev": "docker compose up",
+    "internal:dev": "npm run dev --prefix backend"
+  }
+}
