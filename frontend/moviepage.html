@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StarFlix</title>
     <link rel="stylesheet" href="css/main.css">
-    <script src="js/index.js" defer></script>
+    <script src="js/moviepage.js" defer></script>
 </head>
-
 <body>
-    <header>
+     <header>
         <button id="menu-button">
             <img src="/assets/menu-icon.png" alt="Menu Icon">
         </button>
@@ -22,11 +20,22 @@
             <input type="text" id="search-input" placeholder="Search movies...">
         </div>
     </header>
-    <div id="title">
-        <h1>Welcome to StarFlix</h1>
-    </div>
-    <div id="movie-list">
-    </div>
-</body>
 
+      <main id="movie">
+    <h1 id="movie-title">Loading…</h1>
+
+    <div id="movie-hero">
+      <img id="movie-poster" alt="Poster" />
+      <div id="movie-meta">
+        <p id="movie-release"></p>
+      </div>
+    </div>
+
+    <section id="movie-description">
+      <h2>Description</h2>
+      <p id="movie-overview">Loading…</p>
+    </section>
+  </main>
+    
+</body>
 </html>

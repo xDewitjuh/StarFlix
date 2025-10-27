@@ -16,7 +16,7 @@ async function initializeMovieList() {
         movieLink.innerHTML = `
             <img src="https://image.tmdb.org/t/p/w500${movie.posterPath}" />
         `;
-        movieLink.href = `/movie.html?id=${movie.id}`;
+        movieLink.href = `/moviepage.html?id=${movie.id}`;
 
         movieListDiv.appendChild(movieLink);
     }
