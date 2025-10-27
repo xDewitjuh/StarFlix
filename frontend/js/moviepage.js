@@ -9,7 +9,7 @@
     // Helper to log and fetch
     console.log('[API] →', path);
     const res = await fetch(path);
-    const text = await res.text(); // safer than res.json() for error cases
+    const text = await res.text(); 
     let data = null;
     try { data = text ? JSON.parse(text) : null; } catch {}
     console.log('[API] status', res.status, 'data', data ?? text);
@@ -22,6 +22,8 @@
     const overviewEl = $('movie-overview');
     const releaseEl = $('movie-release');
     const posterEl = $('movie-poster');
+    const genreEl = $('movie-genre');
+    const ratingEl = $('movie-rating');
 
     if (!id) {
       if (titleEl) titleEl.textContent = 'Movie not found';
@@ -44,7 +46,22 @@
       ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
       : '/assets/poster-placeholder.png'; // optional placeholder
     if (posterEl) posterEl.src = posterSrc;
-  }
+
+    // --- New: genre ---
+    if (genreEl) {
+  const names = Array.isArray(movie.genres) ? movie.genres.filter(Boolean) : [];
+  genreEl.textContent = names.length ? `Genre: ${names.join(', ')}` : '';
+    }
+
+    // --- New: rating (numeric can arrive as string from Postgres) ---
+    if (ratingEl) {
+      const score = movie.rating != null ? Number(movie.rating) : null;
+      ratingEl.textContent = score != null && !Number.isNaN(score)
+        ? `Rating: ${score.toFixed(1)}/10`
+        : '';
+    }
+
+  } // end init
 
   document.addEventListener('DOMContentLoaded', init);
 })();

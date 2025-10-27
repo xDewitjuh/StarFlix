@@ -8,6 +8,7 @@ import {
     timestamp,
     primaryKey,
     uniqueIndex,
+    numeric,
 } from "drizzle-orm/pg-core";
 
 // Users
@@ -26,6 +27,7 @@ export const movies = pgTable("movies", {
     description: text(),
     releaseDate: date("release_date"),
     posterPath: varchar("poster_path", { length: 500 }),
+      rating: numeric("rating", { precision: 3, scale: 1 }),   // e.g. 7.5
 });
 
 // Genres
