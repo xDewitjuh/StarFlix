@@ -47,6 +47,19 @@
       : '/assets/poster-placeholder.png'; // optional placeholder
     if (posterEl) posterEl.src = posterSrc;
 
+    // --- Display genres as chips ---
+const genresWrap = document.getElementById('movie-genres');
+if (genresWrap) {
+  genresWrap.innerHTML = ''; // clear any previous chips
+  const names = Array.isArray(movie.genres) ? movie.genres.filter(Boolean) : [];
+  for (const name of names) {
+    const chip = document.createElement('span');
+    chip.className = 'genre-chip';
+    chip.textContent = name;
+    genresWrap.appendChild(chip);
+  }
+}
+
     // --- New: genre ---
     if (genreEl) {
   const names = Array.isArray(movie.genres) ? movie.genres.filter(Boolean) : [];

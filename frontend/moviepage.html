@@ -1,46 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StarFlix</title>
-    <link rel="stylesheet" href="css/main.css">
-    <script src="js/moviepage.js" defer></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StarFlix</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="js/moviepage.js" defer></script>
 </head>
+
 <body>
-     <header>
-        <button id="menu-button">
-            <img src="/assets/menu-icon.png" alt="Menu Icon">
-        </button>
-        <a href="/account.html" id="account-link">
-            <img src="/assets/account-icon.png">
-        </a>
-        <div id="search-container">
-            <img src="/assets/search-icon.png" />
-            <input type="text" id="search-input" placeholder="Search movies...">
-        </div>
-    </header>
+  <header>
+    <button id="menu-button">
+      <img src="/assets/menu-icon.png" alt="Menu Icon" />
+    </button>
 
-      <main id="movie">
-    <h1 id="movie-title">Loading…</h1>
+    <a href="/account.html" id="account-link">
+      <img src="/assets/account-icon.png" alt="Account Icon" />
+    </a>
 
-    <div id="movie-hero">
+    <div id="search-container">
+      <img src="/assets/search-icon.png" />
+      <input type="text" id="search-input" placeholder="Search movies..." />
+    </div>
+  </header>
+
+<main id="movie">
+  <div class="movie-grid">
+    <!-- Left: Poster -->
+    <div class="poster">
       <img id="movie-poster" alt="Poster" />
-      <div id="movie-meta">
-        <p id="movie-release"></p>
-     <p id="movie-genre"></p>
-      <p id="movie-rating"></p>
-      <p>
-        <a id="movie-trailer" href="#" target="_blank" rel="noopener" style="display:none;">▶ Trailer</a>
-      </p>
+    </div>
+
+    <!-- Right: Info (title + genres) -->
+    <div class="info">
+      <h1 id="movie-title" class="title">Loading…</h1>
+      <div class="topbar">
+        <p id="movie-meta" class="meta"></p>
+        <div id="movie-genres" class="genres"></div>
+        <p id="movie-release" class="release-date"></p>
       </div>
     </div>
 
-    <section id="movie-description">
+    <!-- Full-width description (spans both columns) -->
+    <section class="desc">
       <h2>Description</h2>
       <p id="movie-overview">Loading…</p>
     </section>
-  </main>
-    
+  </div>
+</main>
+
+
 </body>
 </html>
