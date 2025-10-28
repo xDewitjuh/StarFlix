@@ -53,14 +53,6 @@
   genreEl.textContent = names.length ? `Genre: ${names.join(', ')}` : '';
     }
 
-    // --- New: rating (numeric can arrive as string from Postgres) ---
-    if (ratingEl) {
-      const score = movie.rating != null ? Number(movie.rating) : null;
-      ratingEl.textContent = score != null && !Number.isNaN(score)
-        ? `Rating: ${score.toFixed(1)}/10`
-        : '';
-    }
-
   } // end init
 
   document.addEventListener('DOMContentLoaded', init);
