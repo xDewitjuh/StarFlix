@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StarFlix — Sign up</title>
+  <link rel="stylesheet" href="/css/account.css" />
+</head>
+<body class="auth" data-mode="signup">
+  <!-- Back -->
+  <a class="auth-back" href="/index.html" aria-label="Back to Home">
+    <img src="/assets/back-icon.svg" alt="" />
+    <span>Back</span>
+  </a>
+
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <h1 class="auth-title">Create your account</h1>
+
+      <form id="auth-form" class="auth-form" novalidate>
+        <label class="auth-label" for="email">Email</label>
+        <input class="auth-input" type="email" id="email" name="email" placeholder="Enter email" required />
+
+        <label class="auth-label" for="password">Password</label>
+        <input class="auth-input" type="password" id="password" name="password" placeholder="Enter password" required />
+
+        <label class="auth-check">
+          <input type="checkbox" id="togglePassword" />
+          <span>Show Password</span>
+        </label>
+
+        <button class="auth-button" type="submit" id="submitBtn">Sign up</button>
+
+        <p class="auth-error" id="authError" role="alert" hidden></p>
+
+        <p class="auth-subtext">
+          Already have an account?
+          <a href="/account.html" class="auth-link">Sign in</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <script src="/js/auth.js" defer></script>
+</body>
+</html>

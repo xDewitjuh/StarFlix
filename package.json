@@ -9,5 +9,12 @@
   "scripts": {
     "dev": "docker compose up",
     "internal:dev": "npm run dev --prefix backend"
+  },
+  "dependencies": {
+    "@elysiajs/cookie": "^0.8.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcryptjs": "^3.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^4.1.12"
   }
 }

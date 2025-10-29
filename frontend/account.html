@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign in • StarFlix</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="auth-page">
+  <!-- Back button (icon) -->
+  <a href="/" class="auth-back" aria-label="Go back">
+    <!-- Inline SVG so you don’t need a new asset -->
+    <svg viewBox="0 0 24 24" class="auth-back-icon" aria-hidden="true">
+      <path d="M15.5 19.5L8 12l7.5-7.5" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </a>
+
+  <main class="auth-wrapper">
+    <section class="auth-card" role="form" aria-labelledby="auth-title">
+      <h1 id="auth-title" class="auth-title">Login</h1>
+
+      <form id="login-form" autocomplete="on" novalidate>
+        <label for="email" class="auth-label">Email:</label>
+        <input id="email" name="email" type="email" class="auth-input" placeholder="Enter email" required />
+
+        <label for="password" class="auth-label">Password:</label>
+        <input id="password" name="password" type="password" class="auth-input" placeholder="Enter password" required />
+
+        <label class="auth-check">
+          <input id="toggle-password" type="checkbox" />
+          <span>Show Password</span>
+        </label>
+
+        <button type="submit" class="auth-btn">Sign in</button>
+
+        <div class="auth-links">
+          <a href="#" class="auth-link">Forgot <span>Username / Password</span>?</a>
+          <span class="auth-sep">•</span>
+          <a href="#" class="auth-link">Don’t have an account? <span>Sign up</span></a>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // tiny enhancement: toggle password visibility
+    document.getElementById('toggle-password')?.addEventListener('change', (e) => {
+      const pwd = document.getElementById('password');
+      pwd.type = e.target.checked ? 'text' : 'password';
+    });
+
+    // (optional) prevent page reload for now
+    document.getElementById('login-form')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // we’ll replace this later with /api/auth/login
+      alert('Sign-in coming soon 🙂');
+    });
+  </script>
+</body>
+</html>
