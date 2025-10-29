@@ -543,3 +543,10 @@ input[type="password"] {
   .auth-btn { height: 52px; }
 }
 
+.auth-hint {
+  margin-top: 6px;
+  font-size: .9rem;
+  color: #7a2330; /* a slightly darker pink/red from your theme */
+  min-height: 1.2em; /* reserve space to avoid layout shift */
+}
+

@@ -2,45 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>StarFlix — Sign up</title>
-  <link rel="stylesheet" href="/css/account.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up • StarFlix</title>
+  <link rel="stylesheet" href="css/main.css" />
 </head>
-<body class="auth" data-mode="signup">
-  <!-- Back -->
-  <a class="auth-back" href="/index.html" aria-label="Back to Home">
-    <img src="/assets/back-icon.svg" alt="" />
-    <span>Back</span>
+<body class="auth-page">
+  <!-- Back button -->
+  <a href="/account.html" class="auth-back" aria-label="Go back">
+    <svg viewBox="0 0 24 24" class="auth-back-icon" aria-hidden="true">
+      <path d="M15.5 19.5L8 12l7.5-7.5" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
   </a>
 
-  <main class="auth-wrap">
-    <section class="auth-card">
-      <h1 class="auth-title">Create your account</h1>
+  <main class="auth-wrapper">
+    <section class="auth-card" role="form" aria-labelledby="auth-title">
+      <h1 id="auth-title" class="auth-title">Create your account</h1>
 
-      <form id="auth-form" class="auth-form" novalidate>
-        <label class="auth-label" for="email">Email</label>
-        <input class="auth-input" type="email" id="email" name="email" placeholder="Enter email" required />
+      <form id="signup-form" autocomplete="on" novalidate>
+        <!-- Email -->
+        <label for="email" class="auth-label">Email:</label>
+        <input id="email" name="email" type="email" class="auth-input"
+               placeholder="Enter email" required />
 
-        <label class="auth-label" for="password">Password</label>
-        <input class="auth-input" type="password" id="password" name="password" placeholder="Enter password" required />
+        <!-- Password -->
+        <label for="password" class="auth-label">Password:</label>
+        <input id="password" name="password" type="password" class="auth-input"
+               placeholder="Enter password" minlength="8" required />
+
+        <!-- Confirm Password -->
+        <label for="confirm" class="auth-label">Confirm password:</label>
+        <input id="confirm" name="confirm" type="password" class="auth-input"
+               placeholder="Re-enter password" minlength="8" required />
 
         <label class="auth-check">
-          <input type="checkbox" id="togglePassword" />
+          <input id="show-password" type="checkbox" />
           <span>Show Password</span>
         </label>
 
-        <button class="auth-button" type="submit" id="submitBtn">Sign up</button>
+        <!-- inline feedback -->
+        <p id="auth-hint" class="auth-hint" aria-live="polite"></p>
 
-        <p class="auth-error" id="authError" role="alert" hidden></p>
+        <button id="auth-submit" type="submit" class="auth-btn">Sign up</button>
 
-        <p class="auth-subtext">
-          Already have an account?
-          <a href="/account.html" class="auth-link">Sign in</a>
-        </p>
+        <div class="auth-links">
+          <span>Already have an account?</span>
+          <a href="/account.html" class="auth-link"><span>Sign in</span></a>
+        </div>
       </form>
     </section>
   </main>
 
-  <script src="/js/auth.js" defer></script>
+  <!-- Use ONLY the external script -->
+  <script src="js/sign-up.js"></script>
 </body>
 </html>
+
+
