@@ -5,12 +5,11 @@ import { db } from './db'
 import { movies, genres, movieGenres } from './db/schema'
 import * as fs from 'fs'
 import { asc, desc } from 'drizzle-orm'
-import { cookie } from '@elysiajs/cookie'
+import cookieMod from '@elysiajs/cookie'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { users } from './db/schema' // you already import movies, add users too
-
+import { users } from './db/schema' // already import movies, add users too
 import 'dotenv/config'; // loads .env into process.env
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
@@ -20,6 +19,8 @@ const AUTH_COOKIE = 'auth'; // cookie name
 function signToken(payload: { id: number; email: string }) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
 }
+
+const cookie = (cookieMod as any).default ?? (cookieMod as any);
 
 
 const app = new Elysia({ adapter: node() })
