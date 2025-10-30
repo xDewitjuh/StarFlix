@@ -36,7 +36,8 @@
                placeholder="Re-enter password" minlength="8" required />
 
         <label class="auth-check">
-          <input id="show-password" type="checkbox" />
+          <!-- CHANGED: id now matches your JS -->
+          <input id="toggle-password" type="checkbox" />
           <span>Show Password</span>
         </label>
 
@@ -53,9 +54,7 @@
     </section>
   </main>
 
-  <!-- Use ONLY the external script -->
+  <!-- Keep JS external -->
   <script src="js/sign-up.js"></script>
 </body>
 </html>
-
-

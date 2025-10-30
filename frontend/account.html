@@ -42,19 +42,6 @@
     </section>
   </main>
 
-  <script>
-    // tiny enhancement: toggle password visibility
-    document.getElementById('toggle-password')?.addEventListener('change', (e) => {
-      const pwd = document.getElementById('password');
-      pwd.type = e.target.checked ? 'text' : 'password';
-    });
-
-    // (optional) prevent page reload for now
-    document.getElementById('login-form')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-    });
-  </script>
-
 <script src="js/account.js"></script>
 
 </body>
