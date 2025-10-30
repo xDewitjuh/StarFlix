@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Profile • StarFlix</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body class="auth-page">
+  <a href="/" class="auth-back" aria-label="Back to home">
+    <svg viewBox="0 0 24 24" class="auth-back-icon" aria-hidden="true">
+      <path d="M15.5 19.5L8 12l7.5-7.5" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </a>
+
+  <main class="auth-wrapper">
+    <section class="auth-card" aria-labelledby="profile-title">
+      <h1 id="profile-title" class="auth-title">Your Profile</h1>
+
+      <div class="auth-label">Email</div>
+      <p id="profile-email" class="auth-input" style="padding: .75rem 1rem; cursor: default;"></p>
+
+      <button id="logout-btn" class="auth-btn" style="margin-top:1rem;">Sign out</button>
+
+      <div class="auth-links" style="margin-top:1rem;">
+        <a href="/" class="auth-link"><span>Back to home</span></a>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/profile.js"></script>
+</body>
+</html>
