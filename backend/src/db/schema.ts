@@ -103,3 +103,14 @@ export const reviews = pgTable(
         uniqueIndex("reviews_user_movie_idx").on(t.userId, t.movieId),
     ]
 );
+
+// --- Favorites (user ↔ movie) ---
+
+export const favorites = pgTable('favorites', {
+  userId: integer('user_id').notNull().references(() => users.id),
+  movieId: integer('movie_id').notNull().references(() => movies.id),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+}, (t) => ({
+  // Prevent duplicates: one favourite per (user, movie)
+  pk: primaryKey({ columns: [t.userId, t.movieId] }),
+}));

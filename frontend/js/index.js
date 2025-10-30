@@ -37,6 +37,7 @@ function renderMovies(movies) {
     // Link to the details page
     const movieLink = document.createElement('a');
     movieLink.className = 'movie';
+    movieLink.setAttribute('data-movie-id', movie.id);
     movieLink.href = `/moviepage.html?id=${movie.id}`;
 
     // NOTE: your backend uses "posterPath" (camelCase).
