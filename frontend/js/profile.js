@@ -1,22 +1,32 @@
 // frontend/js/profile.js
 (async () => {
-  // Guard: if not logged in, send to login
-  const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-  const me = await meRes.json().catch(() => ({}));
+  // Fetch current user
+  const res = await fetch('/api/auth/me', { credentials: 'include' });
+  const data = await res.json().catch(() => ({}));
 
-  if (!meRes.ok || !me?.user) {
+  if (!data || !data.user) {
+    // not signed in -> go to sign in
     window.location.href = '/account.html';
     return;
   }
 
-  // Show email
-  const emailEl = document.getElementById('profile-email');
-  if (emailEl) emailEl.textContent = me.user.email || '(unknown)';
+  const email = data.user.email;
+  const name = email.split('@')[0]; // simple label from email
 
-  // Sign out
-  const logoutBtn = document.getElementById('logout-btn');
-  logoutBtn?.addEventListener('click', async () => {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    window.location.href = '/account.html';
+  // Fill UI
+  const avatar = document.getElementById('avatar');
+  const nameEl = document.getElementById('name');
+  const emailEl = document.getElementById('email');
+
+  nameEl.textContent = name;
+  emailEl.textContent = email;
+  avatar.textContent = (name[0] || 'U').toUpperCase();
+
+  // Logout
+  document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+    } catch (_) {}
+    window.location.href = '/';
   });
 })();

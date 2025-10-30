@@ -3,29 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Profile • StarFlix</title>
+  <title>Profile • StarFlix</title>
   <link rel="stylesheet" href="css/main.css" />
 </head>
-<body class="auth-page">
-  <a href="/" class="auth-back" aria-label="Back to home">
-    <svg viewBox="0 0 24 24" class="auth-back-icon" aria-hidden="true">
+<body class="profile-page">
+  <!-- Back -->
+  <a href="/" class="profile-back" aria-label="Go back">
+    <svg viewBox="0 0 24 24" class="profile-back-icon" aria-hidden="true">
       <path d="M15.5 19.5L8 12l7.5-7.5" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" />
+            stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </a>
 
-  <main class="auth-wrapper">
-    <section class="auth-card" aria-labelledby="profile-title">
-      <h1 id="profile-title" class="auth-title">Your Profile</h1>
-
-      <div class="auth-label">Email</div>
-      <p id="profile-email" class="auth-input" style="padding: .75rem 1rem; cursor: default;"></p>
-
-      <button id="logout-btn" class="auth-btn" style="margin-top:1rem;">Sign out</button>
-
-      <div class="auth-links" style="margin-top:1rem;">
-        <a href="/" class="auth-link"><span>Back to home</span></a>
+  <main class="profile-wrapper">
+    <section class="profile-card">
+      <!-- Header -->
+      <div class="profile-header">
+        <div class="profile-avatar" id="avatar">U</div>
+        <div class="profile-ident">
+          <h1 class="profile-name" id="name">User</h1>
+          <p class="profile-email" id="email">user@example.com</p>
+        </div>
       </div>
+
+      <!-- Actions -->
+      <ul class="profile-list">
+        <li>
+          <button id="logoutBtn" class="profile-row">
+            <span class="profile-row-left">
+              <svg viewBox="0 0 24 24" class="profile-row-icon" aria-hidden="true">
+                <path d="M9 21H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h3"
+                      fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M16 17l5-5-5-5M21 12H9"
+                      fill="none" stroke="currentColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span>Log out</span>
+            </span>
+            <span class="profile-row-right">›</span>
+          </button>
+        </li>
+      </ul>
+
+      <p class="profile-version">App Version 1.0</p>
     </section>
   </main>
 
