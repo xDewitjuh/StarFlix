@@ -564,15 +564,13 @@ input[type="password"] {
 }
 
 /* ===== Profile page (scoped) ===== */
+/* profile page root — do NOT center the whole page */
 .profile-page {
-  /* reuse your pink background like auth pages */
   min-height: 100vh;
-  background: radial-gradient(1200px 600px at 50% -100px, rgba(255,255,255,0.15), transparent),
-              #d38a98; /* base pink */
-  display: grid;
-  place-items: center;
-  color: #2a2426;
+  /* keep your background here if you had one */
+  /* padding: 64px 0;  <-- remove if present */
 }
+
 
 .profile-back {
   position: fixed;
@@ -716,8 +714,8 @@ input[type="password"] {
 
 /* Optional: consistent avatar styling (if not already set) */
 .nav-avatar {
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 9999px;
   display: inline-flex;
   align-items: center;
@@ -1069,4 +1067,25 @@ transform: translateX(-105%);
   margin: 0.5rem 0;
   text-align: left;
 }
+
+/* Center + enlarge the profile card slightly */
+.profile-wrapper {
+  display: flex;
+  justify-content: center;
+  padding-top: 120px; /* move down slightly below navbar */
+  padding-bottom: 100px;
+}
+
+/* Make the white card fill a bit more of the page */
+.profile-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  width: 90%;          /* takes more horizontal space */
+  max-width: 600px;    /* larger but still centered */
+  padding: 40px 32px;  /* extra breathing room inside */
+  transition: all 0.2s ease;
+}
+
+
 

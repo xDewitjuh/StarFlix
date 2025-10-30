@@ -7,13 +7,42 @@
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body class="profile-page">
-  <!-- Back -->
-  <a href="/" class="profile-back" aria-label="Go back">
-    <svg viewBox="0 0 24 24" class="profile-back-icon" aria-hidden="true">
-      <path d="M15.5 19.5L8 12l7.5-7.5" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </a>
+    <header>
+        <button id="menu-button">
+            <img src="/assets/menu-icon.png" alt="Menu Icon">
+        </button>
+        <a href="/account.html" id="account-link">
+            <img src="/assets/account-icon.png">
+        </a>
+        <div id="search-container">
+            <img src="/assets/search-icon.png" />
+            <input type="text" id="search-input" placeholder="Search movies...">
+        </div>
+    </header>
+
+<!-- Slide-out menu drawer -->
+<nav id="app-drawer" class="drawer" aria-hidden="true">
+  <button class="drawer__overlay" tabindex="-1" aria-label="Close menu"></button>
+
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer__header">
+      <h2 class="drawer__title">Menu</h2>
+      <button class="drawer__close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <ul class="drawer__list">
+      <li><a href="/"            class="drawer__link" data-route="/">🏠 <span>Home</span></a></li>
+      <li><a href="/profile.html" class="drawer__link" data-route="/profile.html">👤 <span>Profile</span></a></li>
+      <li><a href="/favorites.html" class="drawer__link" data-route="/favorites.html">❤️ <span>Favorites</span></a></li>
+      <li>
+        <button class="drawer__link drawer__link--disabled" type="button" title="Coming soon">
+          🕘 <span>Watch history</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 
   <main class="profile-wrapper">
     <section class="profile-card">
@@ -59,5 +88,8 @@
   </main>
 
   <script src="js/profile.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/session.js" defer></script>
+
 </body>
 </html>
