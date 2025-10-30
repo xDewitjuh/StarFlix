@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Favorites • StarFlix</title>
+  <link rel="stylesheet" href="css/main.css" />
+
+<style>
+  /* On the favorites page only, hide any per-card favorite buttons (whatever class they use) */
+  #favorites-page .fav-btn,
+  #favorites-page .button.fav-btn,
+  #favorites-page .fav-toggle,
+  #favorites-page .favorite-btn,
+  #favorites-page .fav-fab {
+    display: none !important;
+  }
+  /* Ensure hovering a card doesn't bring it back */
+  #favorites-page .card:hover .fav-btn {
+    display: none !important;
+  }
+</style>
+
+</head>
+<body>
+  <header>
+    <button id="menu-button">
+      <img src="/assets/menu-icon.png" alt="Menu Icon" />
+    </button>
+
+    <a href="/account.html" id="account-link">
+      <img src="/assets/account-icon.png" alt="Account Icon" />
+    </a>
+
+    <div id="search-container">
+      <img src="/assets/search-icon.png" />
+      <input type="text" id="search-input" placeholder="Search movies..." />
+    </div>
+  </header>
+
+
+  <main id="favorites-page">
+    <div class="fav-header">
+      <h1>My Favorites</h1>
+      <p class="fav-sub">Movies you’ve added to your favorites.</p>
+    </div>
+
+    <div id="fav-list" class="fav-grid" aria-live="polite"></div>
+    <p id="fav-empty" class="fav-empty" hidden>You haven’t favorited any movies yet.</p>
+  </main>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const removeFavButtons = () => {
+      document.querySelectorAll('#favorites-page .fav-btn, #favorites-page .favorite-btn, #favorites-page .fav-toggle, #favorites-page .fav-fab')
+        .forEach((b) => b.remove());
+    };
+
+    // 1) Remove any already present
+    removeFavButtons();
+
+    // 2) If your shared JS adds buttons after render, remove them as they appear
+    const list = document.getElementById('fav-list');
+    if (list) {
+      new MutationObserver(removeFavButtons).observe(list, { childList: true, subtree: true });
+    }
+  });
+</script>
+
+
+
+<script src="js/session.js" defer></script>
+<script src="js/index.js" defer></script>
+<script src="js/favorites.js" defer></script>
+
+</body>
+</html>
