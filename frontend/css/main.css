@@ -671,3 +671,48 @@ input[type="password"] {
   font-size: 12px;
   margin: 14px 0 6px;
 }
+
+/* Avatar circle shown when logged in */
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ff5c8d; /* your pink theme color */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Never underline the account icon link (or anything inside it) */
+#account-link,
+#account-link * {
+  text-decoration: none !important;
+}
+#account-link:hover,
+#account-link:focus,
+#account-link:active {
+  text-decoration: none !important;
+  outline: none;
+  box-shadow: none;
+}
+
+/* Optional: consistent avatar styling (if not already set) */
+.nav-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ef6a8b;       /* your pink */
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
+  user-select: none;
+}
+
