@@ -20,7 +20,20 @@ header {
 #menu-button {
   background: none;
   border: none;
+   cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
+#menu-button:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
+}
+
+#menu-button:active {
+  transform: scale(0.95);
+  opacity: 0.75;
+}
+
 #search-container {
   display: flex;
   align-items: center;
@@ -924,3 +937,136 @@ input[type="password"] {
   font-weight: 400;      /* keep this regular weight */
   margin-top: 0;         /* remove extra spacing above */
 }
+
+/* === Drawer (slide-out sidebar) === */
+.drawer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity .2s ease;
+  border: 0;
+}
+
+.drawer__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 280px;
+  max-width: 86vw;
+  background: #f6d2da;              /* matches your pink theme */
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+transform: translateX(-105%);
+  transition: transform .25s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.drawer {
+  overflow-x: hidden;
+}
+
+
+.drawer--open {
+  pointer-events: auto;
+}
+
+.drawer--open .drawer__overlay {
+  opacity: 1;
+}
+
+.drawer--open .drawer__panel {
+  transform: translateX(0);
+}
+
+.drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.drawer__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2b1e24;
+}
+
+.drawer__close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #7b3d4c;
+}
+
+.drawer__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.drawer__link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  background: rgba(255,255,255,0.7);
+  color: #2b1e24;
+  font-weight: 600;
+  border: none; /* also used on <button> variant */
+  cursor: pointer;
+  max-width: 250px;
+}
+
+.drawer__link:hover {
+  background: rgba(255,255,255,0.9);
+}
+
+.drawer__link[aria-current="page"] {
+  outline: 2px solid #a24e62; /* active page indicator */
+  background: #fff;
+}
+
+.drawer__link--disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+/* Optional: lock scroll when drawer is open */
+.body--lock-scroll {
+  overflow: hidden;
+}
+
+/* Container that holds the menu links */
+#side-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers the buttons horizontally */
+  padding: 1rem;       /* Adds space around them */
+}
+
+/* Each menu link/button */
+.menu-item {
+  width: 80%; /* Keeps them within the menu with some margin */
+  margin: 0.5rem 0;
+  text-align: left;
+}
+

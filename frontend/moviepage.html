@@ -9,6 +9,30 @@
 </head>
 
 <body>
+
+<!-- Slide-out menu drawer -->
+<nav id="app-drawer" class="drawer" aria-hidden="true">
+  <button class="drawer__overlay" tabindex="-1" aria-label="Close menu"></button>
+
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer__header">
+      <h2 class="drawer__title">Menu</h2>
+      <button class="drawer__close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <ul class="drawer__list">
+      <li><a href="/"            class="drawer__link" data-route="/">🏠 <span>Home</span></a></li>
+      <li><a href="/profile.html" class="drawer__link" data-route="/profile.html">👤 <span>Profile</span></a></li>
+      <li><a href="/favorites.html" class="drawer__link" data-route="/favorites.html">❤️ <span>Favorites</span></a></li>
+      <li>
+        <button class="drawer__link drawer__link--disabled" type="button" title="Coming soon">
+          🕘 <span>Watch history</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
   <header>
     <button id="menu-button">
       <img src="/assets/menu-icon.png" alt="Menu Icon" />
@@ -54,6 +78,7 @@
 
 <script src="js/session.js"></script>
 <script src="js/favorites.js"></script>
+<script src="js/menu.js"></script>
 
 </body>
 </html>
