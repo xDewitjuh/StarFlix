@@ -10,9 +10,6 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { users } from './db/schema' // keep users + movies imports
 import 'dotenv/config' // loads .env into process.env
-import { favorites } from './db/schema';
-import { and } from 'drizzle-orm';
-
 
 // -------------------------------------------------------------------------
 // Auth constants + helpers
@@ -23,21 +20,6 @@ const AUTH_COOKIE = 'auth' // cookie name
 // Sign a short JWT with user id/email
 function signToken(payload: { id: number; email: string }) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' })
-}
-
-function requireUserId(cookie: Record<string, string | undefined>, set: any): number | null {
-  const token = cookie[AUTH_COOKIE];
-  if (!token) {
-    set.status = 401;
-    return null;
-  }
-  try {
-    const payload = jwt.verify(token, JWT_SECRET) as { id: number; email: string };
-    return payload.id;
-  } catch {
-    set.status = 401;
-    return null;
-  }
 }
 
 // Minimal cookie helpers (replace cookie plugin)
@@ -73,24 +55,6 @@ function getCookieFromHeader(cookieHeader: string | null, name: string): string 
   }
   return null
 }
-
-// Read user id from the request's Cookie header (no cookie plugin needed)
-function requireUserIdFromRequest(request: Request, set: any): number | null {
-  const raw = request.headers.get('cookie');
-  const token = getCookieFromHeader(raw, AUTH_COOKIE);
-  if (!token) {
-    set.status = 401;
-    return null;
-  }
-  try {
-    const payload = jwt.verify(token, JWT_SECRET) as { id: number; email: string };
-    return payload.id;
-  } catch {
-    set.status = 401;
-    return null;
-  }
-}
-
 
 // -------------------------------------------------------------------------
 // App
@@ -276,65 +240,6 @@ app.group('/api', (api) => {
     clearCookieHeader(set, AUTH_COOKIE)
     return { ok: true }
   })
-
-// -------------------------------------------------------------------------
-// FAVORITES
-// -------------------------------------------------------------------------
-
-// GET /api/favorites  -> list of movieIds the user has favorited
-api.get('/favorites', async ({ request, set }) => {
-  const userId = requireUserIdFromRequest(request, set);
-  if (!userId) return { favorites: [] };
-
-  const rows = await db
-    .select({ movieId: favorites.movieId })
-    .from(favorites)
-    .where(eq(favorites.userId, userId));
-
-  return { favorites: rows.map(r => r.movieId) };
-});
-
-// POST /api/favorites  body: { movieId: number }
-// Adds a favorite (no error if it already exists)
-api.post('/favorites', async ({ request, body, set }) => {
-  const userId = requireUserIdFromRequest(request, set);
-  if (!userId) return { ok: false };
-
-  const schema = z.object({ movieId: z.number() });
-  const parsed = schema.safeParse(body);
-  if (!parsed.success) {
-    set.status = 400;
-    return { ok: false, error: parsed.error.flatten() };
-  }
-
-  const { movieId } = parsed.data;
-
-  await db
-    .insert(favorites)
-    .values({ userId, movieId })
-    .onConflictDoNothing({ target: [favorites.userId, favorites.movieId] });
-
-  return { ok: true };
-});
-
-// DELETE /api/favorites/:movieId
-api.delete('/favorites/:movieId', async ({ request, params, set }) => {
-  const userId = requireUserIdFromRequest(request, set);
-  if (!userId) return { ok: false };
-
-  const movieId = Number(params.movieId);
-  if (!Number.isFinite(movieId)) {
-    set.status = 400;
-    return { ok: false, error: 'Invalid movieId' };
-  }
-
-  await db
-    .delete(favorites)
-    .where(and(eq(favorites.userId, userId), eq(favorites.movieId, movieId)));
-
-  return { ok: true };
-});
-
 
   return api
 })
