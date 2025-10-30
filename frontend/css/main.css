@@ -830,3 +830,97 @@ input[type="password"] {
   text-decoration: none;       /* no underline on hover */
 }
 
+/* Favorites page: clean movie title links*/
+.fav-card a {
+  text-decoration: none;   /* No underline */
+  color: black;            /* Plain black text */
+  font-weight: bold;       /* Make title bold */
+  transition: none;        /* No hover animation */
+}
+
+.fav-card a:hover,
+.fav-card a:focus,
+.fav-card a:active {
+  color: black;            /* Remains black when hovered or focused */
+  text-decoration: none;   /* Still no underline */
+}
+
+/* adjust spacing under poster */
+.fav-card-caption {
+  margin-top: 0.4rem;
+  text-align: center;
+}
+
+/* ===== Favorites page layout (aligned + full width responsive) ===== */
+
+#favorites-page {
+  margin: 0 auto;
+  padding: 0 60px; /* matches moviepage horizontal spacing */
+  max-width: 1600px; /* allow more columns on wide screens */
+}
+
+/* Header (title + subtitle) */
+.fav-header {
+  margin-top: 60px;
+  margin-bottom: 20px;
+}
+
+/* Responsive movie grid */
+.fav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 22px;
+  align-items: start;
+  padding-bottom: 40px;
+  padding-top: 30px;
+}
+
+/* Each movie card */
+.fav-card {
+  list-style: none;
+}
+
+/* Poster image */
+.fav-card img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+  box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  transition: transform .2s ease;
+}
+
+.fav-card img:hover {
+  transform: scale(1.03);
+}
+
+/* Movie title under poster */
+.fav-card a {
+  display: block;
+  margin-top: .45rem;
+  text-decoration: none;
+  color: #111;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* Prevent blue hover */
+.fav-card a:hover,
+.fav-card a:focus {
+  color: #111;
+  text-decoration: none;
+}
+
+/* Favorites page header */
+.fav-header h1 {
+  font-size: 2.5rem;     /* makes “My Favorites” larger */
+  font-weight: 800;      /* bold, like a strong title */
+  margin-bottom: 0.5rem; /* spacing between title and subtitle */
+}
+
+.fav-header .fav-sub {
+  font-size: 1.2rem;     /* slightly larger subtitle */
+  font-weight: 400;      /* keep this regular weight */
+  margin-top: 0;         /* remove extra spacing above */
+}
