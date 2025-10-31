@@ -199,3 +199,147 @@
 
   loadState();
 })();
+
+// ---- Reviews (list + create/update + delete) ----
+(async function setupReviews() {
+  const params = new URLSearchParams(location.search);
+  const movieId = Number(params.get('id'));
+  if (!Number.isFinite(movieId)) return;
+
+  const form   = document.getElementById('review-form');
+  const textEl = document.getElementById('review-text');
+  const hint   = document.getElementById('review-login-hint');
+  const list   = document.getElementById('reviews-list');
+  const count  = document.getElementById('reviews-count');
+
+  // 1) check session
+  let me = null;
+  try {
+    const r = await fetch('/api/auth/me', { credentials: 'include' });
+    const d = await r.json();
+    if (r.ok && d?.user) me = d.user;
+  } catch {}
+
+  if (me) {
+    if (form) form.hidden = false;
+    if (hint) hint.hidden = true;
+  } else {
+    if (form) form.hidden = true;
+    if (hint) hint.hidden = false;
+  }
+
+  // DOM helpers
+  const fmtDate = (iso) => {
+    try { return new Date(iso).toLocaleString(); }
+    catch { return ''; }
+  };
+
+  // 2) load + render
+  async function loadReviews() {
+    try {
+      const r = await fetch(`/api/movies/${movieId}/reviews`, { credentials: 'include' });
+      const d = await r.json();
+      const reviews = Array.isArray(d?.reviews) ? d.reviews : [];
+
+      if (count) count.textContent = String(reviews.length);
+      if (list)  list.innerHTML = '';
+
+      reviews.forEach((rev) => {
+        const card = document.createElement('article');
+        card.className = 'review-card';
+
+        const meta = document.createElement('div');
+        meta.className = 'review-meta';
+
+        const who = document.createElement('span');
+        who.className = 'review-author';
+        who.textContent = rev.author?.email || 'User';
+
+        const when = document.createElement('span');
+        when.className = 'review-when';
+        when.textContent = ' • ' + fmtDate(rev.updatedAt || rev.createdAt);
+
+        meta.appendChild(who);
+        meta.appendChild(when);
+
+        // allow delete if it's your review
+        if (rev.author?.isMe) {
+          const actions = document.createElement('div');
+          actions.className = 'review-actions';
+
+          const del = document.createElement('button');
+          del.type = 'button';
+          del.className = 'review-delete';
+          del.textContent = 'Delete';
+
+          del.addEventListener('click', async () => {
+            if (!confirm('Delete your review?')) return;
+            const res = await fetch(`/api/movies/${movieId}/reviews`, {
+              method: 'DELETE',
+              credentials: 'include'
+            });
+            if (res.status === 401) {
+              location.href = '/account.html';
+              return;
+            }
+            if (!res.ok) {
+              alert('Could not delete review.');
+              return;
+            }
+            await loadReviews();
+          });
+
+          actions.appendChild(del);
+          meta.appendChild(actions);
+        }
+
+        const body = document.createElement('div');
+        body.className = 'review-body';
+        body.textContent = rev.text || '';
+
+        card.appendChild(meta);
+        card.appendChild(body);
+        list?.appendChild(card);
+      });
+    } catch (e) {
+      console.error('Failed to load reviews', e);
+    }
+  }
+
+  await loadReviews();
+
+  // 3) create / update (upsert)
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!me) {
+      location.href = '/account.html';
+      return;
+    }
+    const text = (textEl?.value || '').trim();
+    if (!text) return;
+
+    try {
+      const r = await fetch(`/api/movies/${movieId}/reviews`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+
+      if (r.status === 401) {
+        location.href = '/account.html';
+        return;
+      }
+      if (!r.ok) {
+        const msg = (await r.text()) || 'Could not post review.';
+        alert(msg);
+        return;
+      }
+
+      if (textEl) textEl.value = '';
+      await loadReviews();
+    } catch (e) {
+      console.error('Failed to post review', e);
+    }
+  });
+})();

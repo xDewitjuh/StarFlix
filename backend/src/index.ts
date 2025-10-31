@@ -8,7 +8,7 @@ import { asc, desc } from 'drizzle-orm'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { users } from './db/schema' // keep users + movies imports
+import { users, reviews } from './db/schema' 
 import 'dotenv/config' // loads .env into process.env
 import { favorites, watchHistory } from './db/schema';
 import { and } from 'drizzle-orm';
@@ -391,6 +391,111 @@ api.delete('/history/:movieId', async ({ request, params, set }) => {
 
   return { ok: true };
 });
+
+// -------------------------------------------------------------------------
+// REVIEWS (one per user per movie)
+// -------------------------------------------------------------------------
+
+// GET /api/movies/:id/reviews  -> list of reviews for this movie (newest first)
+api.get('/movies/:id/reviews', async ({ params, request, set }) => {
+  const movieId = Number(params.id);
+  if (!Number.isFinite(movieId)) {
+    set.status = 400;
+    return { error: 'Invalid movie id' };
+  }
+
+  // If logged-in, mark which reviews belong to the current user
+  const me = requireUserIdFromRequest(request, { status: 200 });
+
+  const rows = await db
+    .select({
+      id: reviews.id,
+      text: reviews.reviewText,
+      createdAt: reviews.createdAt,
+      updatedAt: reviews.updatedAt,
+      userId: reviews.userId,
+      userEmail: users.email,
+    })
+    .from(reviews)
+    .leftJoin(users, eq(reviews.userId, users.id))
+    .where(eq(reviews.movieId, movieId))
+    .orderBy(desc(reviews.createdAt));
+
+  return {
+    reviews: rows.map((r) => ({
+      id: r.id,
+      text: r.text,
+      createdAt: r.createdAt,
+      updatedAt: r.updatedAt,
+      author: {
+        id: r.userId,
+        email: r.userEmail,
+        // a tiny convenience for the client
+        isMe: me ? r.userId === me : false,
+      },
+    })),
+  };
+});
+
+// POST /api/movies/:id/reviews  body: { text: string }
+// Creates or updates (upsert) *your* review for this movie
+api.post('/movies/:id/reviews', async ({ params, request, body, set }) => {
+  const userId = requireUserIdFromRequest(request, set);
+  if (!userId) return { ok: false };
+
+  const movieId = Number(params.id);
+  if (!Number.isFinite(movieId)) {
+    set.status = 400;
+    return { ok: false, error: 'Invalid movie id' };
+  }
+
+  const schema = z.object({
+    text: z.string().trim().min(1, 'Review cannot be empty').max(2000, 'Review is too long'),
+  });
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    set.status = 400;
+    return { ok: false, error: parsed.error.flatten() };
+  }
+
+  const { text } = parsed.data;
+
+  // Upsert: insert or update existing review (unique on user/movie)
+  const [row] = await db
+    .insert(reviews)
+    .values({ userId, movieId, reviewText: text })
+    .onConflictDoUpdate({
+      target: [reviews.userId, reviews.movieId],
+      set: { reviewText: text, updatedAt: new Date() },
+    })
+    .returning({
+      id: reviews.id,
+      text: reviews.reviewText,
+      createdAt: reviews.createdAt,
+      updatedAt: reviews.updatedAt,
+    });
+
+  return { ok: true, review: row };
+});
+
+// DELETE /api/movies/:id/reviews  -> remove *your* review for this movie
+api.delete('/movies/:id/reviews', async ({ params, request, set }) => {
+  const userId = requireUserIdFromRequest(request, set);
+  if (!userId) return { ok: false };
+
+  const movieId = Number(params.id);
+  if (!Number.isFinite(movieId)) {
+    set.status = 400;
+    return { ok: false, error: 'Invalid movie id' };
+  }
+
+  await db
+    .delete(reviews)
+    .where(and(eq(reviews.userId, userId), eq(reviews.movieId, movieId)));
+
+  return { ok: true };
+});
+
 
 
 

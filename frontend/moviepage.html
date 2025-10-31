@@ -77,7 +77,39 @@
     </section>
   </div>
 
+
+<section class="reviews-section">
+  <h2 class="reviews-title">Comments</h2>
+
+  <!-- Write review -->
+  <div class="review-box" id="review-box">
+    <div class="review-avatar">U</div>
+    <form id="review-form" class="review-form" hidden>
+      <textarea id="review-text" placeholder="Share your thoughts..." required></textarea>
+      <div class="review-form-actions">
+        <button type="submit" class="review-post-btn">Post</button>
+      </div>
+    </form>
+    <div id="review-login-hint" class="review-hint" hidden>
+      <a href="/account.html">Log in</a> to leave a comment.
+    </div>
+  </div>
+
+  <!-- Review list -->
+  <div id="reviews-list" class="reviews-feed" aria-live="polite"></div>
+</section>
+
+<section id="reviews" class="reviews"></section>
+
+  <!-- shown when logged out -->
+  <div id="review-login-hint" class="review-hint" hidden>
+    <a href="/account.html">Log in</a> to write a review.
+  </div>
+
+  <div id="reviews-list" class="reviews-list" aria-live="polite"></div>
 </main>
+
+
 
 <script src="js/session.js"></script>
 <script src="js/favorites.js"></script>
