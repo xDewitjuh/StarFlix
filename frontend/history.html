@@ -7,6 +7,25 @@
   <link rel="stylesheet" href="css/main.css" />
 </head>
 <body>
+
+  <!-- Drawer (same as other pages) -->
+  <nav id="app-drawer" class="drawer" aria-hidden="true">
+    <button class="drawer__overlay" tabindex="-1" aria-label="Close menu"></button>
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Main menu">
+      <div class="drawer__header">
+        <h2 class="drawer__title">Menu</h2>
+        <button class="drawer__close" type="button" aria-label="Close menu">×</button>
+      </div>
+      <ul class="drawer__list">
+        <li><a href="/"               class="drawer__link" data-route="/">🏠 <span>Home</span></a></li>
+        <li><a href="/profile.html"   class="drawer__link" data-route="/profile.html">👤 <span>Profile</span></a></li>
+        <li><a href="/favorites.html" class="drawer__link" data-route="/favorites.html">❤️ <span>Favorites</span></a></li>
+        <li><a href="/history.html"   class="drawer__link" data-route="/history.html">🕘 <span>Watch history</span></a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Header (same as other pages) -->
   <header>
     <button id="menu-button">
       <img src="/assets/menu-icon.png" alt="Menu Icon" />
@@ -20,48 +39,18 @@
     </div>
   </header>
 
-<!-- Slide-out menu drawer -->
-<nav id="app-drawer" class="drawer" aria-hidden="true">
-  <button class="drawer__overlay" tabindex="-1" aria-label="Close menu"></button>
-
-  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Main menu">
-    <div class="drawer__header">
-      <h2 class="drawer__title">Menu</h2>
-      <button class="drawer__close" type="button" aria-label="Close menu">×</button>
-    </div>
-
-    <ul class="drawer__list">
-      <li><a href="/"            class="drawer__link" data-route="/">🏠 <span>Home</span></a></li>
-      <li><a href="/profile.html" class="drawer__link" data-route="/profile.html">👤 <span>Profile</span></a></li>
-      <li><a href="/favorites.html" class="drawer__link" data-route="/favorites.html">❤️ <span>Favorites</span></a></li>
-     <li><a href="/history.html" class="drawer__link">🕘 <span>Watch history</span></a></li>
-    </ul>
-  </div>
-</nav>
-
-
-  <!-- same structure/classes as favorites so the CSS matches exactly -->
+  <!-- Make this identical to favorites -->
   <main id="favorites-page">
     <div class="fav-header">
       <h1>Watch History</h1>
       <p class="fav-sub">Movies you’ve already seen.</p>
     </div>
 
+    <!-- Use the same IDs/classes as favorites -->
     <div id="fav-list" class="fav-grid" aria-live="polite"></div>
-    <p id="fav-empty" class="fav-empty" hidden>You haven’t watched any movies yet.</p>
+    <p id="fav-empty" class="fav-empty" hidden>You haven’t seen any movies yet.</p>
   </main>
 
-
-<!-- Container for watch history movies -->
-<div id="history-list" class="fav-grid" aria-live="polite"></div>
-
-<!-- Message if the user has no watched movies -->
-<p id="history-empty" class="fav-empty" hidden>
-  You haven’t watched any movies yet.
-</p>
-
-
-  <!-- scripts (same order you use elsewhere) -->
   <script src="js/session.js" defer></script>
   <script src="js/index.js" defer></script>
   <script src="js/history.js" defer></script>

@@ -1,86 +1,109 @@
-// frontend/js/history.js
-(async () => {
-  // Redirect to login if not authenticated
-  try {
-    const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-    const me = await meRes.json();
-    if (!me?.user) {
-      window.location.href = '/account.html';
-      return;
+document.addEventListener('DOMContentLoaded', async () => {
+  const container = document.getElementById('fav-list');      // same as favorites
+  const emptyMsg  = document.getElementById('fav-empty');     // same as favorites
+
+  if (!container) {
+    console.error('history.js: #fav-list not found');
+    return;
+  }
+
+  // Helper: resolve a usable poster URL from various possible field names
+  function resolvePoster(movie) {
+    // Try common field names you might have in your API/UI
+    const p =
+      movie.poster_path ??
+      movie.posterPath ??
+      movie.poster_url ??
+      movie.posterUrl ??
+      movie.poster ??
+      null;
+
+    // Nothing at all → local placeholder
+    if (!p) return '/assets/poster-fallback.jpg';
+
+    // Absolute URL → use as-is
+    if (typeof p === 'string' && /^https?:\/\//i.test(p)) return p;
+
+    // TMDB-style relative path (e.g. "/nBRra0xY...jpg")
+    if (typeof p === 'string' && p.startsWith('/')) {
+      return `https://image.tmdb.org/t/p/w342${p}`;
     }
-  } catch {
-    window.location.href = '/account.html';
-    return;
+
+    // Any other string → try it directly
+    return p;
   }
 
-  const listEl =
-    document.getElementById('hist-list') ||
-    document.getElementById('history-list'); // allow either id
-  const emptyEl =
-    document.getElementById('hist-empty') ||
-    document.getElementById('history-empty');
-
-  if (!listEl) {
-    console.warn('history.js: container not found');
-    return;
-  }
-
-  // 1) Fetch list of watched movie IDs
-  let ids = [];
-  try {
-    const res = await fetch('/api/history', { credentials: 'include' });
-    if (!res.ok) throw new Error('Failed to fetch /api/history');
-    const data = await res.json(); // expects { history: number[] }
-    ids = Array.isArray(data?.history) ? data.history : [];
-  } catch (err) {
-    console.error(err);
-    ids = [];
-  }
-
-  if (!ids.length) {
-    if (emptyEl) emptyEl.hidden = false;
-    return;
-  }
-
-  // 2) Resolve each id to a movie object
-  const movies = await Promise.all(
-    ids.map(async (id) => {
-      try {
-        const r = await fetch(`/api/movies/${id}`);
-        if (!r.ok) return null;
-        return await r.json();
-      } catch {
-        return null;
-      }
-    })
-  );
-
-  // 3) Render cards (same visual structure as favorites)
-  listEl.innerHTML = '';
-  for (const mv of movies.filter(Boolean)) {
-    const card = document.createElement('article');
-    card.className = 'fav-card';
+  // Helper: build one card (identical structure to favorites)
+  function renderCard(movie) {
+    const article = document.createElement('article');
+    article.className = 'fav-card';
 
     const wrap = document.createElement('div');
     wrap.className = 'fav-card-wrap';
 
-    const a = document.createElement('a');
-    a.className = 'fav-card-link';
-    a.href = `/moviepage.html?id=${mv.id}`;
+    const link = document.createElement('a');
+    link.className = 'fav-card-link';
+    link.href = `/moviepage.html?id=${movie.id}`;
+    link.title = movie.title;
 
     const img = document.createElement('img');
+    img.src = resolvePoster(movie);
+    img.alt = movie.title;
     img.loading = 'lazy';
-    img.alt = mv.title ?? '';
-    img.src = mv.posterUrl || mv.poster_path || mv.poster || mv.image || '';
-    a.appendChild(img);
 
-    const cap = document.createElement('div');
-    cap.className = 'fav-card-caption';
-    cap.textContent = mv.title ?? '';
+    const caption = document.createElement('div');
+    caption.className = 'fav-card-caption';
+    caption.textContent = movie.title;
 
-    wrap.appendChild(a);
-    wrap.appendChild(cap);
-    card.appendChild(wrap);
-    listEl.appendChild(card);
+    link.appendChild(img);
+    wrap.appendChild(link);
+    wrap.appendChild(caption);
+    article.appendChild(wrap);
+    return article;
   }
-})();
+
+  try {
+    // 1) Get the user’s watch history (list of movie IDs)
+    const res = await fetch('/api/history', { credentials: 'include' });
+    if (!res.ok) {
+      // Not logged in or server returned error → show empty
+      emptyMsg?.removeAttribute('hidden');
+      return;
+    }
+    const { history } = await res.json();
+
+    if (!Array.isArray(history) || history.length === 0) {
+      emptyMsg?.removeAttribute('hidden');
+      return;
+    }
+
+    // 2) Fetch all movies in parallel
+    const movies = await Promise.all(
+      history.map(async (id) => {
+        try {
+          const r = await fetch(`/api/movies/${id}`);
+          if (!r.ok) throw new Error(`Movie ${id} not found`);
+          return await r.json();
+        } catch (e) {
+          console.warn('history.js: movie fetch failed', id, e);
+          return null;
+        }
+      })
+    );
+
+    // 3) Render cards
+    const valid = movies.filter(Boolean);
+    if (valid.length === 0) {
+      emptyMsg?.removeAttribute('hidden');
+      return;
+    }
+
+    // Clear just in case and append
+    container.innerHTML = '';
+    valid.forEach((movie) => container.appendChild(renderCard(movie)));
+    emptyMsg?.setAttribute('hidden', 'hidden');
+  } catch (err) {
+    console.error('history.js:', err);
+    emptyMsg?.removeAttribute('hidden');
+  }
+});
