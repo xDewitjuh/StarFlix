@@ -114,3 +114,12 @@ export const favorites = pgTable('favorites', {
   // Prevent duplicates: one favourite per (user, movie)
   pk: primaryKey({ columns: [t.userId, t.movieId] }),
 }));
+
+// --- Watch history ---------------------------------------------------------
+export const watchHistory = pgTable('watch_history', {
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  movieId: integer('movie_id').notNull().references(() => movies.id, { onDelete: 'cascade' }),
+  watchedAt: timestamp('watched_at', { withTimezone: false }).defaultNow().notNull()
+}, (t) => ({
+  pk: primaryKey({ columns: [t.userId, t.movieId] }),
+}));

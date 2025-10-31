@@ -10,7 +10,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { users } from './db/schema' // keep users + movies imports
 import 'dotenv/config' // loads .env into process.env
-import { favorites } from './db/schema';
+import { favorites, watchHistory } from './db/schema';
 import { and } from 'drizzle-orm';
 
 
@@ -334,6 +334,64 @@ api.delete('/favorites/:movieId', async ({ request, params, set }) => {
 
   return { ok: true };
 });
+
+// -------------------------------------------------------------------------
+// WATCH HISTORY
+// -------------------------------------------------------------------------
+
+// GET /api/history -> list of movieIds the user has watched
+api.get('/history', async ({ request, set }) => {
+  const userId = requireUserIdFromRequest(request, set);
+  if (!userId) return { history: [] };
+
+  const rows = await db
+    .select({ movieId: watchHistory.movieId })
+    .from(watchHistory)
+    .where(eq(watchHistory.userId, userId));
+
+  return { history: rows.map(r => r.movieId) };
+});
+
+// POST /api/history  body: { movieId: number }
+api.post('/history', async ({ request, body, set }) => {
+  const userId = requireUserIdFromRequest(request, set);
+  if (!userId) return { ok: false };
+
+  const schema = z.object({ movieId: z.number() });
+  const parsed = schema.safeParse(body);
+  if (!parsed.success) {
+    set.status = 400;
+    return { ok: false, error: parsed.error.flatten() };
+  }
+
+  const { movieId } = parsed.data;
+
+  await db
+    .insert(watchHistory)
+    .values({ userId, movieId })
+    .onConflictDoNothing({ target: [watchHistory.userId, watchHistory.movieId] });
+
+  return { ok: true };
+});
+
+// DELETE /api/history/:movieId
+api.delete('/history/:movieId', async ({ request, params, set }) => {
+  const userId = requireUserIdFromRequest(request, set);
+  if (!userId) return { ok: false };
+
+  const movieId = Number(params.movieId);
+  if (!Number.isFinite(movieId)) {
+    set.status = 400;
+    return { ok: false, error: 'Invalid movieId' };
+  }
+
+  await db
+    .delete(watchHistory)
+    .where(and(eq(watchHistory.userId, userId), eq(watchHistory.movieId, movieId)));
+
+  return { ok: true };
+});
+
 
 
   return api
