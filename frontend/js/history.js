@@ -1,3 +1,21 @@
+// --- login gate for history.html ---
+(async () => {
+  try {
+    const res = await fetch('/api/auth/me', { credentials: 'include' });
+    const data = await res.json();
+    if (!res.ok || !data?.user) {
+      // Not logged in → go to sign-in
+      window.location.href = '/account.html';
+      return; // stop running the rest of this file
+    }
+  } catch {
+    // On any error, treat as logged-out
+    window.location.href = '/account.html';
+    return;
+  }
+})();
+
+
 document.addEventListener('DOMContentLoaded', async () => {
   const container = document.getElementById('fav-list');      // same as favorites
   const emptyMsg  = document.getElementById('fav-empty');     // same as favorites
