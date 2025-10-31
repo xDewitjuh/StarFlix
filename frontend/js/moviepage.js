@@ -336,6 +336,22 @@
         return;
       }
 
+// Generate a consistent pastel color based on a string (like email)
+function stringToColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const h = Math.abs(hash) % 360; // Hue (0–359)
+  return `hsl(${h}, 60%, 70%)`; // pastel style
+}
+
+// Avatar
+const avatar = document.createElement('div');
+avatar.className = 'review-avatar';
+avatar.textContent = (rev.email?.[0] || 'U').toUpperCase();
+
       if (textEl) textEl.value = '';
       await loadReviews();
     } catch (e) {
