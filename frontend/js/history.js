@@ -1,80 +1,86 @@
 // frontend/js/history.js
 (async () => {
-  const grid = document.getElementById('history-list');
-  const emptyMsg = document.getElementById('history-empty');
-
-  if (!grid || !emptyMsg) return;
-
-  // small helper to make elements
-  const el = (tag, cls, children) => {
-    const n = document.createElement(tag);
-    if (cls) n.className = cls;
-    if (children) {
-      if (Array.isArray(children)) children.forEach(c => n.appendChild(c));
-      else if (typeof children === 'string') n.textContent = children;
-      else n.appendChild(children);
-    }
-    return n;
-  };
-
+  // Redirect to login if not authenticated
   try {
-    // 1) get the list of watched movie IDs
+    const meRes = await fetch('/api/auth/me', { credentials: 'include' });
+    const me = await meRes.json();
+    if (!me?.user) {
+      window.location.href = '/account.html';
+      return;
+    }
+  } catch {
+    window.location.href = '/account.html';
+    return;
+  }
+
+  const listEl =
+    document.getElementById('hist-list') ||
+    document.getElementById('history-list'); // allow either id
+  const emptyEl =
+    document.getElementById('hist-empty') ||
+    document.getElementById('history-empty');
+
+  if (!listEl) {
+    console.warn('history.js: container not found');
+    return;
+  }
+
+  // 1) Fetch list of watched movie IDs
+  let ids = [];
+  try {
     const res = await fetch('/api/history', { credentials: 'include' });
-    // if not logged in, show empty message but keep page usable
-    if (res.status === 401) {
-      emptyMsg.hidden = false;
-      emptyMsg.textContent = 'Please sign in to view your watch history.';
-      return;
-    }
-
-    const data = await res.json();
-    const ids = Array.isArray(data?.history) ? data.history : [];
-
-    if (!ids.length) {
-      emptyMsg.hidden = false;
-      return;
-    }
-
-    // 2) fetch movie details in parallel
-    const details = await Promise.all(
-      ids.map(async (id) => {
-        try {
-          const r = await fetch(`/api/movies/${id}`);
-          if (!r.ok) throw new Error('bad movie response');
-          return await r.json();
-        } catch {
-          return null;
-        }
-      })
-    );
-
-    // 3) render cards
-    details
-      .filter(Boolean)
-      .forEach((movie) => {
-        // expected fields: id, title, posterUrl (adapt if your field names differ)
-        const link = el('a', 'fav-card-link');
-        link.href = `/moviepage.html?id=${movie.id}`;
-        link.title = movie.title || 'Movie';
-
-        const img = new Image();
-        img.loading = 'lazy';
-        img.alt = movie.title || 'Movie poster';
-        img.src = movie.posterUrl || movie.poster || '/assets/poster-fallback.png';
-
-        const caption = el('div', 'fav-card-caption', movie.title || 'Untitled');
-        const wrap = el('div', 'fav-card-wrap', [link]);
-
-        link.appendChild(img);
-        wrap.appendChild(caption);
-
-        const card = el('article', 'fav-card', wrap);
-        grid.appendChild(card);
-      });
-
+    if (!res.ok) throw new Error('Failed to fetch /api/history');
+    const data = await res.json(); // expects { history: number[] }
+    ids = Array.isArray(data?.history) ? data.history : [];
   } catch (err) {
-    console.error('Failed to load history:', err);
-    emptyMsg.hidden = false;
-    emptyMsg.textContent = 'Could not load your watch history.';
+    console.error(err);
+    ids = [];
+  }
+
+  if (!ids.length) {
+    if (emptyEl) emptyEl.hidden = false;
+    return;
+  }
+
+  // 2) Resolve each id to a movie object
+  const movies = await Promise.all(
+    ids.map(async (id) => {
+      try {
+        const r = await fetch(`/api/movies/${id}`);
+        if (!r.ok) return null;
+        return await r.json();
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  // 3) Render cards (same visual structure as favorites)
+  listEl.innerHTML = '';
+  for (const mv of movies.filter(Boolean)) {
+    const card = document.createElement('article');
+    card.className = 'fav-card';
+
+    const wrap = document.createElement('div');
+    wrap.className = 'fav-card-wrap';
+
+    const a = document.createElement('a');
+    a.className = 'fav-card-link';
+    a.href = `/moviepage.html?id=${mv.id}`;
+
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.alt = mv.title ?? '';
+    img.src = mv.posterUrl || mv.poster_path || mv.poster || mv.image || '';
+    a.appendChild(img);
+
+    const cap = document.createElement('div');
+    cap.className = 'fav-card-caption';
+    cap.textContent = mv.title ?? '';
+
+    wrap.appendChild(a);
+    wrap.appendChild(cap);
+    card.appendChild(wrap);
+    listEl.appendChild(card);
   }
 })();

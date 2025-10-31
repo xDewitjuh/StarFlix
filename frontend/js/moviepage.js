@@ -123,3 +123,79 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
+
+// ---- Watch button toggle (copy/paste) ----
+(function initWatchButton() {
+  const btn = document.getElementById('watch-btn');
+  if (!btn) return;
+
+  const labelEl = btn.querySelector('.label') || btn;
+
+  // Get movieId from query (?id=123)
+  const params = new URLSearchParams(location.search);
+  const movieId = Number(params.get('id'));
+  if (!Number.isFinite(movieId)) {
+    btn.disabled = true;
+    return;
+  }
+
+  let inFlight = false;
+
+  const setState = (watched) => {
+    btn.classList.toggle('is-watched', watched);
+    btn.setAttribute('aria-pressed', watched ? 'true' : 'false');
+    if (labelEl) labelEl.textContent = watched ? 'Watched' : 'Mark as watched';
+  };
+
+  // Initial state: is this movie in the user's history?
+  const loadState = async () => {
+    try {
+      const res = await fetch('/api/history', { credentials: 'include' });
+      if (!res.ok) return setState(false);
+      const data = await res.json(); // { history: number[] }
+      const watched = Array.isArray(data?.history) && data.history.includes(movieId);
+      setState(watched);
+    } catch {
+      setState(false);
+    }
+  };
+
+  btn.addEventListener('click', async () => {
+    if (inFlight) return;
+    const wasWatched = btn.classList.contains('is-watched');
+
+    // Optimistic UI
+    setState(!wasWatched);
+    inFlight = true;
+
+    try {
+      let res;
+      if (wasWatched) {
+        // UNDO → remove from history
+        res = await fetch(`/api/history/${movieId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+      } else {
+        // ADD to history
+        res = await fetch('/api/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ movieId })
+        });
+      }
+
+      if (!res.ok) throw new Error(`history toggle failed ${res.status}`);
+    } catch (err) {
+      console.error(err);
+      // Roll back UI on failure
+      setState(wasWatched);
+      if (err?.status === 401) location.href = '/account.html';
+    } finally {
+      inFlight = false;
+    }
+  });
+
+  loadState();
+})();

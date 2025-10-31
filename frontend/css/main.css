@@ -1087,5 +1087,58 @@ transform: translateX(-105%);
   transition: all 0.2s ease;
 }
 
+/* Ensure the poster area allows absolute children */
+.movie-poster {
+  position: relative;
+}
+
+/* Watch button pinned to bottom-right of the poster */
+.watch-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+
+  /* pill look */
+  background-color: #cd7c9098;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: 0.92rem;
+  font-weight: 500;
+
+  /* layout — force horizontal text & inline icon */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+
+  /* override any accidental global rules */
+  writing-mode: horizontal-tb !important;
+  transform: none !important;
+
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  z-index: 2;
+  transition: background-color .2s ease, transform .1s ease;
+}
+
+.watch-btn:hover {
+  background-color: #b93d5e;
+  transform: scale(1.05);
+}
+
+.watch-btn:active {
+  transform: scale(0.98);
+}
+
+/* Optional “watched” state */
+.watch-btn.is-watched {
+  background-color: #4caf50;
+}
+.watch-btn.is-watched .label::after {
+  content: " ✓";
+}
+
 
 
