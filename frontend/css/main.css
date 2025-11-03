@@ -1527,3 +1527,198 @@ transform: translateX(-105%);
 .review-delete:hover {
   color: #c36b7c;
 }
+
+/* =========================================================
+   SEARCH PAGE — make it match Favorites/History styling
+   Expected DOM (works with either id/class names below):
+   <main id="search-page">
+     <header class="search-header">...</header>
+     <div class="search-grid"> ... result cards ... </div>
+   </main>
+   If your markup uses .results-grid, it’s also covered.
+   ========================================================= */
+
+/* Page container (glass panel spacing like others) */
+#search-page {
+  max-width: 1200px;
+  margin: 32px auto 80px;
+  padding: 0 20px;
+}
+
+/* Header (same rhythm as Favorites) */
+#search-page .search-header h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #2b2b2b;
+}
+#search-page .search-header .sub {
+  color: rgba(0,0,0,.65);
+  margin: 0 0 18px;
+}
+
+/* Grid: mirrors .fav-grid */
+#search-page .search-grid,
+#search-page .results-grid {
+  display: grid;
+  grid-template-columns: repeat( auto-fill, minmax(180px, 1fr) );
+  gap: 18px;
+  align-items: start;
+}
+
+/* Card shell: mirrors .fav-card look */
+#search-page .search-card,
+#search-page .result-card,
+#search-page .results-grid > a,
+#search-page .search-grid > a {
+  display: block;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+
+/* Hover lift */
+#search-page .search-card:hover,
+#search-page .result-card:hover,
+#search-page .results-grid > a:hover,
+#search-page .search-grid > a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.16);
+  background: rgba(255,255,255,0.85);
+}
+
+/* Poster (keep ratio tidy like Favorites) */
+#search-page .search-card img,
+#search-page .result-card img,
+#search-page .results-grid > a > img,
+#search-page .search-grid > a > img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 2 / 3;           /* 2:3 poster */
+  object-fit: cover;
+  background: #eee;
+}
+
+/* Title strip under poster */
+#search-page .search-title,
+#search-page .results-grid > a > span,
+#search-page .search-grid > a > span {
+  display: block;
+  padding: 10px 12px;
+  font-size: .92rem;
+  font-weight: 700;
+  color: #2b2b2b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* If titles are plain <a> siblings (fallback) */
+#search-page .search-grid a + a,
+#search-page .results-grid a + a {
+  margin-top: 8px;
+  color: #2b2b2b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* Make large posters not overflow the grid */
+#search-page img {
+  max-width: 100%;
+  height: auto;
+  border: none;
+}
+
+/* Small screens: tighter columns */
+@media (max-width: 640px) {
+  #search-page .search-grid,
+  #search-page .results-grid {
+    grid-template-columns: repeat( auto-fill, minmax(140px, 1fr) );
+    gap: 14px;
+  }
+}
+
+/* Hide bare underlined blue links inside cards */
+#search-page .search-grid a:where(:not(.search-card):not(.result-card)):link,
+#search-page .results-grid a:where(:not(.search-card):not(.result-card)):link {
+  text-decoration: none;
+}
+
+/* --- Search results fine-tuning --- */
+
+/* Rounded poster corners */
+#search-page .search-card img,
+#search-page .result-card img,
+#search-page .results-grid > a > img,
+#search-page .search-grid > a > img {
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+
+/* Slight zoom on hover */
+#search-page .search-card:hover img,
+#search-page .result-card:hover img,
+#search-page .results-grid > a:hover > img,
+#search-page .search-grid > a:hover > img {
+  transform: scale(1.03);
+}
+
+/* Clean, black, non-underlined movie title links */
+#search-page .search-title,
+#search-page .results-grid > a > span,
+#search-page .search-grid > a > span,
+#search-page .search-grid a,
+#search-page .results-grid a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Optional hover tint for titles */
+#search-page .search-grid a:hover,
+#search-page .results-grid a:hover {
+  color: #c36b7c; /* matches your theme */
+}
+
+/* Posters in search results */
+main a > img {
+  border-radius: 12px;
+  display: block;           /* prevents little gaps under images */
+  transition: transform .2s ease;
+}
+
+main a > img:hover {
+  transform: scale(1.03);
+}
+
+/* Title link that comes right after a poster link */
+main a + a {
+  color: #000;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-block;
+  margin-top: 8px;
+}
+
+/* Optional hover tint for the title */
+main a + a:hover {
+  color: #c36b7c;
+}
+
+/* --- Fix movie title links in search results --- */
+main a {
+  color: black;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+main a:hover {
+  color: #c36b7c;
+  text-decoration: none;
+}
