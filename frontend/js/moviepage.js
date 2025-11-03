@@ -1,4 +1,8 @@
 // frontend/js/moviepage.js
+
+// ---------------------------------------------------------------------------
+// Basic helpers (shared)
+// ---------------------------------------------------------------------------
 (function () {
   function getId() {
     return new URLSearchParams(location.search).get('id');
@@ -18,10 +22,15 @@
     }
   }
 
+  // expose for other IIFEs in this file
+  window.api = api;
+  window.$ = $;
+  window.getId = getId;
+
   // --- Favourites helpers ---
   async function getFavorites() {
     const { res, data } = await api('/api/favorites');
-    if (!res.ok) return new Set();                // not logged in or error
+    if (!res.ok) return new Set(); // not logged in or error
     const list = Array.isArray(data?.favorites) ? data.favorites : [];
     return new Set(list);
   }
@@ -86,9 +95,9 @@
       });
     }
 
-    // --- Favourite button: set initial state from API + click to toggle ---
+    // Favourite button
     if (favBtn) {
-      let favorites = await getFavorites();       // Set() of ids (if not logged in => empty)
+      let favorites = await getFavorites(); // Set() of ids (if not logged in => empty)
       setFavButtonState(favBtn, favorites.has(id));
 
       favBtn.addEventListener('click', async (e) => {
@@ -124,14 +133,15 @@
   document.addEventListener('DOMContentLoaded', init);
 })();
 
-// ---- Watch button toggle (copy/paste) ----
+// ---------------------------------------------------------------------------
+// Watch button toggle
+// ---------------------------------------------------------------------------
 (function initWatchButton() {
   const btn = document.getElementById('watch-btn');
   if (!btn) return;
 
   const labelEl = btn.querySelector('.label') || btn;
 
-  // Get movieId from query (?id=123)
   const params = new URLSearchParams(location.search);
   const movieId = Number(params.get('id'));
   if (!Number.isFinite(movieId)) {
@@ -147,7 +157,6 @@
     if (labelEl) labelEl.textContent = watched ? 'Watched' : 'Mark as watched';
   };
 
-  // Initial state: is this movie in the user's history?
   const loadState = async () => {
     try {
       const res = await fetch('/api/history', { credentials: 'include' });
@@ -171,13 +180,11 @@
     try {
       let res;
       if (wasWatched) {
-        // UNDO → remove from history
         res = await fetch(`/api/history/${movieId}`, {
           method: 'DELETE',
           credentials: 'include'
         });
       } else {
-        // ADD to history
         res = await fetch('/api/history', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -200,7 +207,9 @@
   loadState();
 })();
 
-// ---- Reviews (list + create/update + delete) ----
+// ---------------------------------------------------------------------------
+// Reviews (list + create/upsert + delete) – tolerant to API shapes
+// ---------------------------------------------------------------------------
 (async function setupReviews() {
   const params = new URLSearchParams(location.search);
   const movieId = Number(params.get('id'));
@@ -212,7 +221,7 @@
   const list   = document.getElementById('reviews-list');
   const count  = document.getElementById('reviews-count');
 
-  // 1) check session
+  // Check session
   let me = null;
   try {
     const r = await fetch('/api/auth/me', { credentials: 'include' });
@@ -228,13 +237,102 @@
     if (hint) hint.hidden = false;
   }
 
-  // DOM helpers
   const fmtDate = (iso) => {
     try { return new Date(iso).toLocaleString(); }
     catch { return ''; }
   };
 
-  // 2) load + render
+  // Normalize a review from different backend shapes into a consistent shape
+  function normalizeReview(rev) {
+    return {
+      id: rev.id,
+      userId: rev.userId ?? rev.author?.id ?? rev.authorId,
+      email: rev.email ?? rev.author?.email ?? rev.user?.email ?? 'User',
+      text: rev.reviewText ?? rev.text ?? '',
+      createdAt: rev.createdAt,
+      updatedAt: rev.updatedAt,
+      isMine: !!(
+        (me && rev.userId === me?.id) ||
+        (me && rev.author?.isMe === true)
+      )
+    };
+  }
+
+  function renderReview(revRaw) {
+    const rev = normalizeReview(revRaw);
+
+    const card = document.createElement('article');
+    card.className = 'review-card';
+
+    const meta = document.createElement('div');
+    meta.className = 'review-meta';
+
+    const who = document.createElement('span');
+    who.className = 'review-user';
+    who.textContent = rev.email || 'User';
+
+    const when = document.createElement('span');
+    when.className = 'review-date';
+    when.textContent = ' • ' + fmtDate(rev.updatedAt || rev.createdAt);
+
+    meta.appendChild(who);
+    meta.appendChild(when);
+
+    // Delete button for own review
+    if (rev.isMine) {
+      const actions = document.createElement('div');
+      actions.className = 'review-actions';
+
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'review-delete';
+      del.textContent = 'Delete';
+
+      del.addEventListener('click', async () => {
+        if (!confirm('Delete your review?')) return;
+
+        // Try route that deletes your review for the movie (no id needed)
+        let ok = false;
+        try {
+          const r1 = await fetch(`/api/movies/${movieId}/reviews`, {
+            method: 'DELETE',
+            credentials: 'include'
+          });
+          if (r1.status === 401) {
+            location.href = '/account.html';
+            return;
+          }
+          if (r1.ok) ok = true;
+          // fallback to id-based route if 404 / not found
+          if (!ok && rev.id != null) {
+            const r2 = await fetch(`/api/reviews/${rev.id}`, {
+              method: 'DELETE',
+              credentials: 'include'
+            });
+            if (r2.ok) ok = true;
+          }
+        } catch {}
+
+        if (!ok) {
+          alert('Could not delete review.');
+          return;
+        }
+        await loadReviews(); // refresh inline
+      });
+
+      actions.appendChild(del);
+      meta.appendChild(actions);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'review-body';
+    body.textContent = rev.text;
+
+    card.appendChild(meta);
+    card.appendChild(body);
+    return card;
+  }
+
   async function loadReviews() {
     try {
       const r = await fetch(`/api/movies/${movieId}/reviews`, { credentials: 'include' });
@@ -242,65 +340,10 @@
       const reviews = Array.isArray(d?.reviews) ? d.reviews : [];
 
       if (count) count.textContent = String(reviews.length);
-      if (list)  list.innerHTML = '';
-
-      reviews.forEach((rev) => {
-        const card = document.createElement('article');
-        card.className = 'review-card';
-
-        const meta = document.createElement('div');
-        meta.className = 'review-meta';
-
-        const who = document.createElement('span');
-        who.className = 'review-author';
-        who.textContent = rev.author?.email || 'User';
-
-        const when = document.createElement('span');
-        when.className = 'review-when';
-        when.textContent = ' • ' + fmtDate(rev.updatedAt || rev.createdAt);
-
-        meta.appendChild(who);
-        meta.appendChild(when);
-
-        // allow delete if it's your review
-        if (rev.author?.isMe) {
-          const actions = document.createElement('div');
-          actions.className = 'review-actions';
-
-          const del = document.createElement('button');
-          del.type = 'button';
-          del.className = 'review-delete';
-          del.textContent = 'Delete';
-
-          del.addEventListener('click', async () => {
-            if (!confirm('Delete your review?')) return;
-            const res = await fetch(`/api/movies/${movieId}/reviews`, {
-              method: 'DELETE',
-              credentials: 'include'
-            });
-            if (res.status === 401) {
-              location.href = '/account.html';
-              return;
-            }
-            if (!res.ok) {
-              alert('Could not delete review.');
-              return;
-            }
-            await loadReviews();
-          });
-
-          actions.appendChild(del);
-          meta.appendChild(actions);
-        }
-
-        const body = document.createElement('div');
-        body.className = 'review-body';
-        body.textContent = rev.text || '';
-
-        card.appendChild(meta);
-        card.appendChild(body);
-        list?.appendChild(card);
-      });
+      if (list) {
+        list.innerHTML = '';
+        reviews.forEach((rev) => list.appendChild(renderReview(rev)));
+      }
     } catch (e) {
       console.error('Failed to load reviews', e);
     }
@@ -308,7 +351,6 @@
 
   await loadReviews();
 
-  // 3) create / update (upsert)
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!me) {
@@ -336,26 +378,11 @@
         return;
       }
 
-// Generate a consistent pastel color based on a string (like email)
-function stringToColor(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  const h = Math.abs(hash) % 360; // Hue (0–359)
-  return `hsl(${h}, 60%, 70%)`; // pastel style
-}
-
-// Avatar
-const avatar = document.createElement('div');
-avatar.className = 'review-avatar';
-avatar.textContent = (rev.email?.[0] || 'U').toUpperCase();
-
       if (textEl) textEl.value = '';
-      await loadReviews();
+      await loadReviews(); // show immediately
     } catch (e) {
       console.error('Failed to post review', e);
     }
   });
 })();
+

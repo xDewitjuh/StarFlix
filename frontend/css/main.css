@@ -1304,6 +1304,8 @@ transform: translateX(-105%);
   font-size: 0.85rem;
   cursor: pointer;
   transition: color 0.2s;
+  padding: 0;
+  margin-left: 8px;
 }
 
 .review-delete:hover {
@@ -1492,3 +1494,36 @@ transform: translateX(-105%);
   }
 }
 
+/* Row with email • date • Delete */
+.review-meta {
+  display: flex;
+  align-items: center;   /* vertically center everything on the row */
+  gap: 8px;
+  flex-wrap: wrap;       /* keeps it nice on small screens */
+}
+
+/* The right-side container for the Delete button */
+.review-meta .review-actions {
+  margin-top: 0;         /* <-- critical fix (override the old 6px) */
+  margin-left: auto;     /* push Delete to the right */
+  display: flex;
+  align-items: center;
+}
+
+/* Button look & baseline alignment */
+.review-delete {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  line-height: 1;
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.review-delete:hover {
+  color: #c36b7c;
+}
