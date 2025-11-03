@@ -4,7 +4,7 @@ import { node } from '@elysiajs/node'
 import { db } from './db'
 import { movies, genres, movieGenres } from './db/schema'
 import * as fs from 'fs'
-import { asc, desc } from 'drizzle-orm'
+import { asc, desc, sql } from 'drizzle-orm'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
@@ -496,6 +496,21 @@ api.delete('/movies/:id/reviews', async ({ params, request, set }) => {
   return { ok: true };
 });
 
+// -----------------------------------------------------------------------
+// SEARCH MOVIES BY TITLE
+// -----------------------------------------------------------------------
+api.get('/search', async ({ query }) => {
+  const q = String(query?.q || '').trim();
+  if (!q) return { results: [] };
+
+  const results = await db
+    .select()
+    .from(movies)
+    .where(sql`LOWER(${movies.title}) LIKE LOWER(${`%${q}%`})`)
+    .limit(20);
+
+  return { results };
+});
 
 
 

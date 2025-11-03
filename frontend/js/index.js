@@ -50,3 +50,18 @@ function renderMovies(movies) {
     movieListDiv.appendChild(movieLink);
   }
 }
+
+// Search bar behavior
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('search-input');
+  if (!searchInput) return;
+
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const query = searchInput.value.trim();
+      if (query) {
+        window.location.href = `/search.html?q=${encodeURIComponent(query)}`;
+      }
+    }
+  });
+});

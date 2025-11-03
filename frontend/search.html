@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search • StarFlix</title>
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+  <header>
+    <button id="menu-button">
+      <img src="/assets/menu-icon.png" alt="Menu Icon" />
+    </button>
+    <a href="/account.html" id="account-link">
+      <img src="/assets/account-icon.png" alt="Account Icon" />
+    </a>
+    <div id="search-container">
+      <img src="/assets/search-icon.png" alt="Search" />
+      <input type="text" id="search-input" placeholder="Search movies..." />
+    </div>
+  </header>
+
+<!-- Slide-out menu drawer -->
+<nav id="app-drawer" class="drawer" aria-hidden="true">
+  <button class="drawer__overlay" tabindex="-1" aria-label="Close menu"></button>
+
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="Main menu">
+    <div class="drawer__header">
+      <h2 class="drawer__title">Menu</h2>
+      <button class="drawer__close" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <ul class="drawer__list">
+      <li><a href="/"            class="drawer__link" data-route="/">🏠 <span>Home</span></a></li>
+      <li><a href="/profile.html" class="drawer__link" data-route="/profile.html">👤 <span>Profile</span></a></li>
+      <li><a href="/favorites.html" class="drawer__link" data-route="/favorites.html">❤️ <span>Favorites</span></a></li>
+     <li><a href="/history.html" class="drawer__link">🕘 <span>Watch history</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+  <main id="search-page">
+    <h1 id="search-title">Search Results</h1>
+    <div id="search-results" class="fav-grid"></div>
+    <p id="search-empty" class="fav-empty" hidden>No results found.</p>
+  </main>
+
+  <script src="js/search.js" defer></script>
+  <script src="js/menu.js"></script>
+</body>
+</html>
