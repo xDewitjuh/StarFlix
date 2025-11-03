@@ -26,6 +26,7 @@
   window.api = api;
   window.$ = $;
   window.getId = getId;
+  
 
   // --- Favourites helpers ---
   async function getFavorites() {
@@ -78,7 +79,11 @@
     // Render
     if (titleEl) titleEl.textContent = movie.title ?? 'Untitled';
     if (overviewEl) overviewEl.textContent = movie.description ?? 'No description available.';
-    if (releaseEl) releaseEl.textContent = movie.releaseDate ? `Release date: ${movie.releaseDate}` : '';
+    const dateStr = movie.releaseDate; // '2026-12-17'
+const d = new Date(dateStr);
+const formatted = d.toLocaleDateString('en-US', { year:'numeric', month:'2-digit', day:'2-digit' });
+releaseEl.textContent = `Release date: ${formatted}`;
+
 
     const posterSrc = movie.posterPath
       ? `https://image.tmdb.org/t/p/w500${movie.posterPath}`
