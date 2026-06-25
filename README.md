@@ -1,4 +1,5 @@
 # Starflix
+A modern movie platform to discover, track, and review films.
 
 ## Demo
 
