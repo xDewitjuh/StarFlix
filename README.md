@@ -1,6 +1,6 @@
 # Starflix
 
-##Demo
+## Demo
 
 <p align="center">
   <img src="assets/StarFlixDemo.gif" width="900" alt="StarFlix Demo">
