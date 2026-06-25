@@ -1,5 +1,11 @@
 # Starflix
 
+##Demo
+
+<p align="center">
+  <img src="assets/StarFlixDemo.gif" width="900" alt="StarFlix Demo">
+</p>
+
 ## Tech description
 
 - frontend: HTML, CSS and JS
